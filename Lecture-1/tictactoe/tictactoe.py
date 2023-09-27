@@ -3,6 +3,7 @@ Tic Tac Toe Player
 """
 
 import math
+import copy
 
 X = "X"
 O = "O"
@@ -66,28 +67,79 @@ def result(board, action):
     """
     Returns the board that results from making move (i, j) on the board.
     """
-    raise NotImplementedError
+    i = action[0]
+    j = action[1]
 
+    newBoard = copy.deepcopy(board)
+    moves = actions(newBoard)
+    if action not in moves:
+        raise NameError("Not a valid action")
+    turn = player(board)
+    if turn == X:
+        turn = X
+    else:
+        turn = O
+
+    newBoard[i][j] = turn
+
+    return newBoard
 
 def winner(board):
     """
     Returns the winner of the game, if there is one.
     """
-    raise NotImplementedError
+    tac = [X, O]
+    rows = []
+    for row in board:
+        rows.append(row)
+    columns = []
+    for i in range(3):
+        columns.append([board[i][0], board[i][1], board[i][2]])
+
+    for tic in tac:
+        # Horizontal victory:
+        for row in rows:
+            if row == [tic, tic, tic]:
+                return tic
+        # Vertical victory:
+        for column in columns:
+            if column == [tic, tic, tic]:
+                return tic
+        # Diagonal victory:
+        if (board[1][1] == tic):
+            if (board[0][0] == tic and board[2][2] == tic):
+                return tic
+            if (board[0][2] == tic and board[2][0] == tic):
+                return tic
+    return None
+
+
+
 
 
 def terminal(board):
     """
     Returns True if game is over, False otherwise.
     """
-    return False
+
+    if winner(board) != None:
+        return True
+    if not actions(board):
+        return True
+    else:
+        return False
 
 
 def utility(board):
     """
     Returns 1 if X has won the game, -1 if O has won, 0 otherwise.
     """
-    raise NotImplementedError
+    if winner(board) == X:
+        return 1
+    if winner(board) == O:
+        return -1
+    else:
+        return 0
 
 
 def minimax(board):
