@@ -94,7 +94,7 @@ def winner(board):
         rows.append(row)
     columns = []
     for i in range(3):
-        columns.append([board[i][0], board[i][1], board[i][2]])
+        columns.append([board[0][i], board[1][i], board[2][i]])
 
     for tic in tac:
         # Horizontal victory:
@@ -146,4 +146,51 @@ def minimax(board):
     """
     Returns the optimal action for the current player on the board.
     """
-    raise NotImplementedError
+    if terminal(board):
+        return None
+    
+    def maxValue(board):
+        value = -math.inf
+        if terminal(board):
+            return utility(board)
+        for action in actions(board):
+            value = max(value, minValue(result(board, action)))
+        return value
+    
+    def minValue(board):
+        value = math.inf
+        if terminal(board):
+            return utility(board)
+        for action in actions(board):
+            value = min(value, maxValue(result(board, action)))
+        return value
+    
+    
+    
+    if player(board) == X:
+
+        if board == initial_state():
+            return (1,1)
+
+        moves = []
+        for action in actions(board):
+            moves.append([minValue(result(board, action)), action])
+        value = -10
+        selected = None
+        for move in moves:
+            if move[0] > value:
+                value = move[0]
+                selected = move
+        return selected[1]
+
+    else:
+        moves = []
+        for action in actions(board):
+            moves.append([maxValue(result(board, action)), action])
+        value = 10
+        selected = None
+        for move in moves:
+            if move[0] < value:
+                value = move[0]
+                selected = move
+        return selected[1]
